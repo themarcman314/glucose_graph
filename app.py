@@ -100,5 +100,3 @@ def update_glucose_graph_from_date(n, date):
 
 
 server = app.server  # IMPORTANT: expose the Flask server to Gunicorn
-if __name__ == '__main__':
-    app.run(debug=True)
