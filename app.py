@@ -46,8 +46,7 @@ def create_figure(df):
 
 fig = create_figure(df)
 
-#app = Dash(__name__, requests_pathname_prefix="/glucose/")
-app = Dash(__name__, url_base_pathname="/glucose/")
+app = Dash(__name__, requests_pathname_prefix="/glucose/")
 app.layout = html.Div([
     html.H1('Glucose'),
     dcc.Graph(id="glucose-graph",figure=fig),
@@ -99,5 +98,7 @@ def update_glucose_graph_from_date(n, date):
         df_cb = pd.read_sql_query("select timestamp, value from glucose WHERE date(timestamp) = date('now');", con_cb)
         return create_figure(df_cb), ''
 
+
+server = app.server  # IMPORTANT: expose the Flask server to Gunicorn
 if __name__ == '__main__':
     app.run(debug=True)
