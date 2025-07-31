@@ -2,16 +2,19 @@ from dash import Dash, html, dash_table, dcc, Input, Output, callback, no_update
 import pandas as pd
 import plotly.express as px
 from datetime import date
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 import sqlite3
 from dash.exceptions import PreventUpdate
+
+# set timezone
+UTC_PLUS_2 = timezone(timedelta(hours=2))
+today = datetime.now(UTC_PLUS_2).date()
 
 con = sqlite3.connect("my_db")  
 
 df = pd.read_sql_query("select timestamp, value from glucose WHERE date(timestamp) = date('now');", con)
 con.close()
 
-today = date.today()
 
 def create_figure(df):
     df_sorted = df.sort_values('timestamp')
@@ -21,7 +24,7 @@ def create_figure(df):
         y='value', 
         range_y=[0, 300],
         title="My near real-time glucose levels",
-        labels={"timestamp": "Time", "value": "Glucose Reading (mg/dL)"}
+        labels={'timestamp': "Time", 'value': "Glucose Reading (mg/dL)"}
     )
 
     fig.update_layout(
@@ -47,6 +50,7 @@ def create_figure(df):
 fig = create_figure(df)
 
 app = Dash(__name__, requests_pathname_prefix="/glucose/")
+#app = Dash(__name__, url_base_pathname="/glucose/")
 app.layout = html.Div([
     html.H1('Glucose'),
     dcc.Graph(id="glucose-graph",figure=fig),
@@ -65,38 +69,51 @@ app.layout = html.Div([
         style={'textAlign': 'center'},
     ),
     dcc.Interval(
-        id='interval-component',
-        interval=10*1000, # update every 10s
+        id='graph_refresh',
+        interval=30*1000, # update every 30s
         n_intervals=0
-    )
+    ),
+
+    dcc.Interval(
+        id='day_refresh',
+        interval=10*60*1000, # update every 10 minutes
+        n_intervals=0
+    ),
 ])
 
 @callback(
-        Output('glucose-graph', 'figure'),
-        Output('err', 'children'),
-        Input('interval-component', 'n_intervals'),
-        Input(component_id='date-picker', component_property='date'))
+    Output('glucose-graph', 'figure'),
+    Output('err', 'children'),
+    Input('graph_refresh', 'n_intervals'),
+    Input(component_id='date-picker', component_property='date'),
+)
 def update_glucose_graph_from_date(n, date):
-    if date:
-        con_cb = sqlite3.connect("my_db")  
-        query = """
-        SELECT * FROM glucose
-        WHERE date(timestamp) = ?
-        """
-        df_cb = pd.read_sql_query(query, con_cb, params=(date,))
-        con_cb.close()
+    con_cb = sqlite3.connect("my_db")  
+    query = """
+    SELECT * FROM glucose
+    WHERE date(timestamp) = ?
+    """
+    df_cb = pd.read_sql_query(query, con_cb, params=(date,))
+    con_cb.close()
 
-        if df_cb.empty:
-            #raise PreventUpdate
-            date_obj = datetime.strptime(date, '%Y-%m-%d')
-            return no_update, 'No data available for {}'.format(date_obj.strftime('%d-%m-%Y'))
+    if df_cb.empty:
+        #raise PreventUpdate
+        date_obj = datetime.strptime(date, '%Y-%m-%d')
+        return no_update, 'No data available for {}'.format(date_obj.strftime('%d-%m-%Y'))
 
-        else:
-            return create_figure(df_cb), ''
     else:
-        con_cb = sqlite3.connect("my_db")  
-        df_cb = pd.read_sql_query("select timestamp, value from glucose WHERE date(timestamp) = date('now');", con_cb)
         return create_figure(df_cb), ''
 
+@app.callback(
+    Output('date-picker', 'date'),
+    Output('date-picker', 'max_date_allowed'),
+    Input('day_refresh', 'n_intervals')
+)
+def set_today_date(n):
+    UTC_PLUS_2 = timezone(timedelta(hours=2))
+    today = datetime.now(UTC_PLUS_2).date()
+    return today, today
 
-server = app.server  # IMPORTANT: expose the Flask server to Gunicorn
+    #if __name__ == '__main__':
+    #app.run(debug=True)
+server = app.server
