@@ -50,7 +50,18 @@ def create_figure(df):
 fig = create_figure(df)
 
 #app = Dash(__name__, requests_pathname_prefix="/glucose/")
-app = Dash(__name__, url_base_pathname="/glucose/")
+app = Dash(__name__, title="Glucose", url_base_pathname="/glucose/", assets_folder="assets")
+
+app.index_string = app.index_string.replace(
+    "{%metas%}",
+    """
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    """
+)
+
+
 app.layout = html.Div([
     html.H1('Glucose'),
     dcc.Graph(id="glucose-graph",figure=fig),

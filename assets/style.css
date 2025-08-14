@@ -1,0 +1,131 @@
+h1,h2
+{
+	font-family: "Courier New", monospace;
+}
+
+h1
+{
+	color:#d64439;
+}
+h2
+{
+  color:#3aa68a;
+}
+h3
+{
+  color:#226352;
+}
+
+#portrait
+{
+  margin: auto;
+  display: block;
+  max-width: 100%;
+  height: auto;
+	border-radius: 50px;
+}
+img
+{
+  margin: auto;
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.container
+{
+  display: flex; flex-wrap: wrap;
+}
+
+.container p {
+  flex: 1;
+  margin-left: 1rem;
+}
+
+#my_intro
+{
+  flex: 1;
+}
+
+ul.menu {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  /*background-color:#002d04*/;
+  /*background-color:#1A3C34;*/
+  /*background-color:#00FF99;*/
+  /*background-color:#00A86B;*/
+  background-color:#223142;
+}
+
+.menu li {
+  float: left;
+}
+
+.menu li a {
+  display: block;
+  /*color: grey;
+  color: #01303f;
+  color: #2f3e4f;
+  color: #dce2e2;*/
+  color: #ffffff;
+
+
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+	font-family: "Courier New", monospace;
+}
+
+a {
+  text-decoration: none;
+  /*color: #b58c8a;
+  color: #3aa68a;*/
+  color: #f0b634;
+
+}
+
+.menu li a:hover {
+  /*background-color: #111;
+  background-color: #dce2e2;*/
+  color: #f0b634;
+}
+
+@media screen and (max-width: 600px) {
+  .menu li {
+    float: none;
+  }
+}
+
+body
+{
+  font-family: "Open Sans", sans-serif;
+  color:#d6d3d1;
+}
+main
+{
+  max-width: 1000px;
+  margin: auto;
+}
+
+p
+{
+  /*font-family: "Open Sans", sans-serif;*/
+  text-align: justify;
+  min-width: 200px;
+  /*color:#dce2e2;
+  color:#d6d3d1;*/
+}
+hr {
+ /*border-color: #b58c8a;*/
+ border-color: #f0b634;
+}
+video {
+  display: block;
+  margin: 0 auto;
+}
+.projects-list 
+{
+  text-align: center;
+}
