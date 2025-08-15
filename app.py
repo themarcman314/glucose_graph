@@ -1,4 +1,4 @@
-from dash import Dash, html, dash_table, dcc, Input, Output, callback, no_update
+from dash import Dash, html, dash_table, dcc, Input, Output, callback, no_update, State
 import pandas as pd
 import plotly.express as px
 from datetime import date
@@ -24,7 +24,8 @@ def create_figure(df):
         y='value', 
         range_y=[0, 300],
         title="My near real-time glucose levels",
-        labels={'timestamp': "Time", 'value': "Glucose Reading (mg/dL)"}
+        labels={'timestamp': "Time", 'value': "Glucose Reading (mg/dL)"},
+        template="plotly_dark"
     )
 
     fig.update_layout(
@@ -50,9 +51,20 @@ def create_figure(df):
 fig = create_figure(df)
 
 app = Dash(__name__, requests_pathname_prefix="/glucose/")
-#app = Dash(__name__, url_base_pathname="/glucose/")
+
+app.index_string = app.index_string.replace(
+    "{%metas%}",
+    """
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    """
+)
+
+
 app.layout = html.Div([
     html.H1('Glucose'),
+    html.Hr(),
     dcc.Graph(id="glucose-graph",figure=fig),
     html.Div(
         children=[
@@ -114,6 +126,4 @@ def set_today_date(n):
     today = datetime.now(UTC_PLUS_2).date()
     return today, today
 
-    #if __name__ == '__main__':
-    #app.run(debug=True)
 server = app.server
