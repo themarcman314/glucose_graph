@@ -24,7 +24,8 @@ def create_figure(df):
         y='value', 
         range_y=[0, 300],
         title="My near real-time glucose levels",
-        labels={'timestamp': "Time", 'value': "Glucose Reading (mg/dL)"}
+        labels={'timestamp': "Time", 'value': "Glucose Reading (mg/dL)"},
+        template="plotly_dark"
     )
 
     fig.update_layout(
