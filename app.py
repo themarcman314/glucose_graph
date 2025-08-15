@@ -63,6 +63,12 @@ app.index_string = app.index_string.replace(
 
 
 app.layout = html.Div([
+    html.Ul(className="menu",
+            children=[
+                html.Li(html.A("My Projects", href="../myprojects.html")),
+                html.Li(html.A("Resources", href="../resources.html")),
+                html.Li(html.A("About", href="../aboutme.html")),
+                html.Li(html.A("Glucose", href="/glucose/"))]),
     html.H1('Glucose'),
     html.Hr(),
     dcc.Graph(id="glucose-graph",figure=fig),
