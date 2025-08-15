@@ -69,34 +69,37 @@ app.layout = html.Div([
                 html.Li(html.A("Resources", href="../resources.html")),
                 html.Li(html.A("About", href="../aboutme.html")),
                 html.Li(html.A("Glucose", href="/glucose/"))]),
-    html.H1('Glucose'),
-    html.Hr(),
-    dcc.Graph(id="glucose-graph",figure=fig),
-    html.Div(
-        children=[
-            html.P([
-                "Select a date : ",
-                dcc.DatePickerSingle(
-                    id='date-picker',
-                    date=today,
-                    max_date_allowed=today,
-                    display_format='DD-MM-YYYY')
-                ]),
-            html.P(id='err', style={'color': 'red'})
-        ],
-        style={'textAlign': 'center'},
-    ),
-    dcc.Interval(
-        id='graph_refresh',
-        interval=30*1000, # update every 30s
-        n_intervals=0
-    ),
+    html.Main([
+    
+        html.H1('Glucose'),
+        html.Hr(),
+        dcc.Graph(id="glucose-graph",figure=fig),
+        html.Div(
+            children=[
+                html.P([
+                    "Select a date : ",
+                    dcc.DatePickerSingle(
+                        id='date-picker',
+                        date=today,
+                        max_date_allowed=today,
+                        display_format='DD-MM-YYYY')
+                    ]),
+                html.P(id='err', style={'color': 'red'})
+            ],
+            style={'textAlign': 'center'},
+        ),
+        dcc.Interval(
+            id='graph_refresh',
+            interval=30*1000, # update every 30s
+            n_intervals=0
+        ),
 
-    dcc.Interval(
-        id='day_refresh',
-        interval=10*60*1000, # update every 10 minutes
-        n_intervals=0
-    ),
+        dcc.Interval(
+            id='day_refresh',
+            interval=10*60*1000, # update every 10 minutes
+            n_intervals=0
+        )
+    ])
 ])
 
 @callback(
