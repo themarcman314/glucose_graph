@@ -86,7 +86,7 @@ app.layout = html.Div([
                     ]),
                 html.P(id='err', style={'color': 'red'})
             ],
-            style={'textAlign': 'center'},
+            className='date-picker-container',
         ),
         dcc.Interval(
             id='graph_refresh',
