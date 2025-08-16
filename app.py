@@ -10,7 +10,7 @@ from dash.exceptions import PreventUpdate
 UTC_PLUS_2 = timezone(timedelta(hours=2))
 today = datetime.now(UTC_PLUS_2).date()
 
-con = sqlite3.connect("my_db")  
+con = sqlite3.connect("/var/lib/flaskapp/my_db")  
 
 df = pd.read_sql_query("select timestamp, value from glucose WHERE date(timestamp) = date('now');", con)
 con.close()

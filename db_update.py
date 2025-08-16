@@ -5,7 +5,7 @@ from datetime import datetime
 import sqlite3
 import time
 
-DB_PATH = 'my_db'
+DB_PATH = '/var/lib/flaskapp/my_db'
 
 def insert_many(db_path, measurements):
     conn = sqlite3.connect(db_path)
@@ -22,15 +22,12 @@ def insert_many(db_path, measurements):
 def ensure_table_exists(db_path):
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS glucose (
-            timestamp TEXT PRIMARY KEY,
+    c.execute(""" CREATE TABLE IF NOT EXISTS glucose ( timestamp TEXT PRIMARY KEY,
             value REAL
         )
     """)
     conn.commit()
     conn.close()
-
 
 def main():
     client = PyLibreLinkUp(email=creds.email, password=creds.key, api_url=APIUrl.FR)
