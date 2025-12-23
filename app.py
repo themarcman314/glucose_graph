@@ -29,6 +29,8 @@ def create_figure(df):
     )
 
     fig.update_layout(
+        title_font_color = "#3AA68A",
+        title_font_family = "Courier New",
         shapes=[
             # Green zone
             dict(type="rect", xref="paper", yref="y",
@@ -50,7 +52,7 @@ def create_figure(df):
 
 fig = create_figure(df)
 
-app = Dash(__name__, requests_pathname_prefix="/glucose/")
+app = Dash(__name__, requests_pathname_prefix="/glucose/", title="Glucose")
 
 app.index_string = app.index_string.replace(
     "{%metas%}",
@@ -58,6 +60,10 @@ app.index_string = app.index_string.replace(
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="dark">
+    <meta name="description" content="Curiosity meets code:
+    this personal project shares my real-time glucose levels,
+    built from the ground up to explore my passion for embedded systems
+    and practical health tech applications."/>
     """
 )
 
@@ -65,9 +71,9 @@ app.index_string = app.index_string.replace(
 app.layout = html.Div([
     html.Ul(className="menu",
             children=[
-                html.Li(html.A("My Projects", href="../myprojects.html")),
+                html.Li(html.A("My Projects", href="../projects/myprojects.html")),
                 html.Li(html.A("Resources", href="../resources.html")),
-                html.Li(html.A("About", href="../aboutme.html")),
+                html.Li(html.A("About", href="/")),
                 html.Li(html.A("Glucose", href="/glucose/"))]),
     html.Main([
     
@@ -109,7 +115,7 @@ app.layout = html.Div([
     Input(component_id='date-picker', component_property='date'),
 )
 def update_glucose_graph_from_date(n, date):
-    con_cb = sqlite3.connect("my_db")  
+    con_cb = sqlite3.connect("/var/lib/flaskapp/my_db")  
     query = """
     SELECT * FROM glucose
     WHERE date(timestamp) = ?
