@@ -10,7 +10,7 @@ from dash.exceptions import PreventUpdate
 UTC_PLUS_2 = timezone(timedelta(hours=2))
 today = datetime.now(UTC_PLUS_2).date()
 
-con = sqlite3.connect("/var/lib/flaskapp/my_db")  
+con = sqlite3.connect("/var/lib/flaskapp/my_db")
 
 df = pd.read_sql_query("select timestamp, value from glucose WHERE date(timestamp) = date('now');", con)
 con.close()
@@ -32,25 +32,30 @@ def create_figure(df):
         shapes=[
             # Green zone
             dict(type="rect", xref="paper", yref="y",
-                 x0=0, x1=1, y0=70, y1=200,
-                 fillcolor="rgba(0,255,0,0.1)", line_width=0),
+                 x0=0, x1=1, y0=70, y1=180,
+                 fillcolor="rgba(0,255,0,0.2)", line_width=0),
 
             # Red zone - low
             dict(type="rect", xref="paper", yref="y",
                  x0=0, x1=1, y0=0, y1=70,
-                 fillcolor="rgba(255,0,0,0.1)", line_width=0),
-    
+                 fillcolor="rgba(255,0,0,0.2)", line_width=0),
+
+            # Orange zone
+            dict(type="rect", xref="paper", yref="y",
+                 x0=0, x1=1, y0=180, y1=240,
+                 fillcolor="rgba(255,165,0,0.2)", line_width=0),
+
             # Red zone - high
             dict(type="rect", xref="paper", yref="y",
-                 x0=0, x1=1, y0=200, y1=300,
-                 fillcolor="rgba(255,0,0,0.1)", line_width=0)
+                 x0=0, x1=1, y0=240, y1=300,
+                 fillcolor="rgba(255,0,0,0.2)", line_width=0)
         ]
     )
     return fig
 
 fig = create_figure(df)
 
-app = Dash(__name__, requests_pathname_prefix="/glucose/")
+app = Dash(__name__, requests_pathname_prefix="/glucose/", title="Glucose")
 
 app.index_string = app.index_string.replace(
     "{%metas%}",
@@ -58,6 +63,10 @@ app.index_string = app.index_string.replace(
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="dark">
+    <meta name="description" content="Curiosity meets code:
+    this personal project shares my real-time glucose levels,
+    built from the ground up to explore my passion for embedded systems
+    and practical health tech applications."/>
     """
 )
 
@@ -65,14 +74,15 @@ app.index_string = app.index_string.replace(
 app.layout = html.Div([
     html.Ul(className="menu",
             children=[
-                html.Li(html.A("My Projects", href="../myprojects.html")),
+                html.Li(html.A("My Projects", href="../projects/myprojects.html")),
                 html.Li(html.A("Resources", href="../resources.html")),
-                html.Li(html.A("About", href="../aboutme.html")),
+                html.Li(html.A("About", href="/")),
                 html.Li(html.A("Glucose", href="/glucose/"))]),
     html.Main([
     
         html.H1('Glucose'),
         html.Hr(),
+        html.P('These readings represent glucose levels in the interstitial fluid, which the CGM uses to estimate my systemic blood glucose.'),
         dcc.Graph(id="glucose-graph",figure=fig),
         html.Div(
             children=[
@@ -109,7 +119,7 @@ app.layout = html.Div([
     Input(component_id='date-picker', component_property='date'),
 )
 def update_glucose_graph_from_date(n, date):
-    con_cb = sqlite3.connect("my_db")  
+    con_cb = sqlite3.connect("/var/lib/flaskapp/my_db")
     query = """
     SELECT * FROM glucose
     WHERE date(timestamp) = ?
