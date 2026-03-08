@@ -90,6 +90,7 @@ app.layout = html.Div([
                     "Select a date : ",
                     dcc.DatePickerSingle(
                         id='date-picker',
+                        with_portal=True,
                         date=today,
                         max_date_allowed=today,
                         display_format='DD-MM-YYYY')
